@@ -6,6 +6,7 @@ cam = bpy.context.scene.camera
 scene = bpy.context.scene
 # load the GES render files as background for camera
 # Sample format: ifiles = "D:/Local/Project/Beach/beach/footage/beach_0000.jpeg"
+# Caution! separete ident is "/" ! do not "\" !
 ifiles = "D:/Local/Project/sydney/sydney/footage/sydney_000.jpeg"
 
 img = bpy.data.movieclips.load(ifiles)
@@ -17,11 +18,17 @@ bg.source = "MOVIE_CLIP"
 
 # load JSON file for evaluation
 # Sample format: jfilename = "D:/Local/Project/Beach/beach/beach.json"
+# Caution! separete ident is "/" ! do not "\" !
 jfilename = "D:/Local/Project/sydney/sydney/sydney.json"
 
 jfile = open(jfilename,'r')
 camdata = json.load(jfile)
 jfile.close
+
+#set render resolution and fps
+bpy.context.scene.render.resolution_x = camdata["width"]
+bpy.context.scene.render.resolution_y = camdata["height"]
+bpy.context.scene.render.fps = camdata["frameRate"]
 
 # evaluate number of frames
 s_end = camdata["numFrames"]
@@ -132,11 +139,17 @@ for f in range (0,s_end + 1):
     cam.keyframe_insert(data_path="rotation_euler", index=-1, frame=f+1)
     
     
-# camera "lens" based on 20 degree Filed of View (default value)
-cam.data.sensor_width = 35 
 cam.data.type = 'PERSP'
 cam.data.lens_unit = 'FOV'
-cam.data.angle = math.radians(34.8)
+
+# camera "lens" based on json
+for f in range (0,s_end + 1):
+    bpy.context.scene.camera.data.angle = math.radians(camdata["cameraFrames"][f]["fovVertical"])
+    bpy.context.scene.camera.data.keyframe_insert(data_path="lens", index=-1, frame=f+1)
+
+# camera "sensor width" is 62mm. Based on manual looking in likely matching.
+cam.data.sensor_width = 62
+
 
 # move camera to GES parent
 cam.parent = ges_parent
@@ -144,6 +157,3 @@ cam.parent = ges_parent
 bpy.context.scene.frame_current = 0
 
 print("done")
-
-    
-    
