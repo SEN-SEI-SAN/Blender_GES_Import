@@ -78,7 +78,7 @@ for f in range (0,len(camdata["trackPoints"])):
     
     trk.rotation_euler[1] = math.radians(90-rlng)
     trk.rotation_euler[2] = math.radians(rlat)
-    trk.scale = (0.1,0.1,0.1)
+    trk.scale = (0.01,0.01,0.01)
     
     if f==0:
         # create parent object - parent used to align position on earth with Blender global coordinates
@@ -147,8 +147,8 @@ for f in range (0,s_end + 1):
     bpy.context.scene.camera.data.angle = math.radians(camdata["cameraFrames"][f]["fovVertical"])
     bpy.context.scene.camera.data.keyframe_insert(data_path="lens", index=-1, frame=f+1)
 
-# camera "sensor width" is 62mm. Based on manual looking in likely matching.
-cam.data.sensor_width = 62
+# camera "sensor width" is 64mm. Based on manual looking in likely matching.
+cam.data.sensor_width = 64
 
 
 # move camera to GES parent
